@@ -116,12 +116,16 @@ public sealed class TranscriptPdfService(TranscriptVerificationService verificat
         gfx.DrawLine(new XPen(navy, 1.8), margin + 90, 278, width - margin - 90, 278);
 
         var infoY = 315d;
-        gfx.DrawRectangle(new XSolidBrush(XColor.FromArgb(247, 248, 250)), margin + 34, infoY, contentWidth - 68, 118);
-        gfx.DrawRectangle(new XPen(XColor.FromArgb(190, 197, 207), .7), margin + 34, infoY, contentWidth - 68, 118);
-        DrawCoverInfo(gfx, "姓名 / NAME", profile?.Name ?? "-", margin + 58, infoY + 22, 190, simHei, simSun);
-        DrawCoverInfo(gfx, "学号 / ID", settings.Account, margin + 288, infoY + 22, 170, simHei, times);
-        DrawCoverInfo(gfx, "学业范围 / PERIOD", $"{results.First().Term} - {results.Last().Term}", margin + 58, infoY + 69, 260, simHei, times);
-        DrawCoverInfo(gfx, "制表日期 / DATE", DateTime.Today.ToString("yyyy-MM-dd"), margin + 338, infoY + 69, 120, simHei, times);
+        var infoX = margin + 34;
+        var infoWidth = contentWidth - 68;
+        var infoCellWidth = (infoWidth - 68) / 2;
+        var infoRightX = infoX + infoWidth / 2 + 10;
+        gfx.DrawRectangle(new XSolidBrush(XColor.FromArgb(247, 248, 250)), infoX, infoY, infoWidth, 118);
+        gfx.DrawRectangle(new XPen(XColor.FromArgb(190, 197, 207), .7), infoX, infoY, infoWidth, 118);
+        DrawCoverInfo(gfx, "姓名 / NAME", profile?.Name ?? "-", infoX + 22, infoY + 15, infoCellWidth, simHei, simSun);
+        DrawCoverInfo(gfx, "学号 / ID", settings.Account, infoRightX, infoY + 15, infoCellWidth, simHei, times);
+        DrawCoverInfo(gfx, "学业范围 / PERIOD", $"{results.First().Term} - {results.Last().Term}", infoX + 22, infoY + 65, infoCellWidth, simHei, times);
+        DrawCoverInfo(gfx, "制表日期 / DATE", DateTime.Today.ToString("yyyy-MM-dd"), infoRightX, infoY + 65, infoCellWidth, simHei, times);
 
         DrawSummary(gfx, margin + 34, 474, contentWidth - 68, results.Count, aggregate.Records.Count, aggregate, simHei, timesBold);
 
@@ -223,8 +227,8 @@ public sealed class TranscriptPdfService(TranscriptVerificationService verificat
 
     private static void DrawCoverInfo(XGraphics gfx, string label, string value, double x, double y, double width, XFont labelFont, XFont valueFont)
     {
-        gfx.DrawString(label, labelFont, XBrushes.Black, new XRect(x, y, 104, 16), XStringFormats.TopLeft);
-        gfx.DrawString(value, valueFont, XBrushes.Black, new XRect(x + 108, y, width - 108, 18), XStringFormats.TopLeft);
+        gfx.DrawString(label, labelFont, XBrushes.Black, new XRect(x, y, width, 15), XStringFormats.TopLeft);
+        gfx.DrawString(FitText(gfx, value, valueFont, width), valueFont, XBrushes.Black, new XRect(x, y + 20, width, 18), XStringFormats.TopLeft);
     }
 
     private static void DrawSummary(XGraphics gfx, double x, double y, double width, int termCount, int courseCount, ScoreResult result, XFont label, XFont value)

@@ -22,6 +22,7 @@ public partial class SettingsWindow : Window
         TermBox.Text = controller.Settings.Term;
         StartDatePicker.SelectedDate = controller.Settings.TermStartDate;
         IslandCheck.IsChecked = controller.Settings.IslandEnabled;
+        CompactIslandCheck.IsChecked = controller.Settings.CompactIslandUntilImminent;
         ReminderCheck.IsChecked = controller.Settings.ReminderEnabled;
         StartupCheck.IsChecked = controller.Settings.StartWithWindows;
     }
@@ -56,6 +57,7 @@ public partial class SettingsWindow : Window
                 ScoreTerm = _controller.Settings.ScoreTerm,
                 TermStartDate = StartDatePicker.SelectedDate?.Date ?? TermPolicy.InferTermStart(term),
                 IslandEnabled = IslandCheck.IsChecked == true,
+                CompactIslandUntilImminent = CompactIslandCheck.IsChecked == true,
                 ReminderEnabled = ReminderCheck.IsChecked == true,
                 StartWithWindows = StartupCheck.IsChecked == true
             };

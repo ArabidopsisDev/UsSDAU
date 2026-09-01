@@ -11,12 +11,15 @@ namespace UsSDAU.Windows;
 
 public partial class IslandWindow : Window
 {
+    private const double FullIslandWidth = 760;
+    private const double CompactIslandWidth = 286;
     private readonly AppController _controller;
     private readonly DispatcherTimer _timer = new() { Interval = TimeSpan.FromSeconds(15) };
     private readonly DispatcherTimer _collapseTimer = new() { Interval = TimeSpan.FromSeconds(8) };
     private string? _lastReminderKey;
     private string? _stateKey;
     private bool _collapsed;
+    private bool _compactMode;
     private bool _closingForExit;
 
     public IslandWindow(AppController controller)
@@ -48,6 +51,7 @@ public partial class IslandWindow : Window
         var current = isToday ? today.FirstOrDefault(x => now >= x.Start && now <= x.End) : null;
         var next = isToday ? today.FirstOrDefault(x => x.Start > now) : today.FirstOrDefault();
         var imminent = isToday && next is not null && next.Start - now <= TimeSpan.FromMinutes(30);
+        ApplyWidthMode(_controller.Settings.CompactIslandUntilImminent && !imminent);
 
         Shell.Background = imminent
             ? new LinearGradientBrush(Color.FromArgb(244, 16, 91, 214), Color.FromArgb(244, 22, 132, 255), 0)
@@ -173,6 +177,37 @@ public partial class IslandWindow : Window
         };
         animation.Completed += (_, _) => { BeginAnimation(TopProperty, null); Top = target; };
         BeginAnimation(TopProperty, animation);
+    }
+
+    private void ApplyWidthMode(bool compact)
+    {
+        if (_compactMode == compact && Math.Abs(Width - (compact ? CompactIslandWidth : FullIslandWidth)) < 1) return;
+        _compactMode = compact;
+        var targetWidth = compact ? CompactIslandWidth : FullIslandWidth;
+        var targetLeft = SystemParameters.WorkArea.Left + (SystemParameters.WorkArea.Width - targetWidth) / 2;
+
+        if (!compact)
+        {
+            ScheduleColumn.Width = new GridLength(1, GridUnitType.Star);
+            Divider.Visibility = Visibility.Visible;
+            DayStrip.Visibility = Visibility.Visible;
+        }
+        else
+        {
+            ScheduleColumn.Width = new GridLength(0);
+            Divider.Visibility = Visibility.Collapsed;
+            DayStrip.Visibility = Visibility.Collapsed;
+        }
+
+        BeginAnimation(WidthProperty, null);
+        BeginAnimation(LeftProperty, null);
+        var easing = new CubicEase { EasingMode = EasingMode.EaseOut };
+        var widthAnimation = new DoubleAnimation(Width, targetWidth, TimeSpan.FromMilliseconds(300)) { EasingFunction = easing, FillBehavior = FillBehavior.Stop };
+        var leftAnimation = new DoubleAnimation(Left, targetLeft, TimeSpan.FromMilliseconds(300)) { EasingFunction = easing, FillBehavior = FillBehavior.Stop };
+        widthAnimation.Completed += (_, _) => { BeginAnimation(WidthProperty, null); Width = targetWidth; };
+        leftAnimation.Completed += (_, _) => { BeginAnimation(LeftProperty, null); Left = targetLeft; };
+        BeginAnimation(WidthProperty, widthAnimation);
+        BeginAnimation(LeftProperty, leftAnimation);
     }
 
     private void MakeNonActivating()

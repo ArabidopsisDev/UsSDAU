@@ -11,6 +11,7 @@ public sealed record AcademicSettings
     public DateTime TermStartDate { get; init; } = TermPolicy.InferTermStart(TermPolicy.InferCurrentTerm());
     public bool StartWithWindows { get; init; }
     public bool IslandEnabled { get; init; } = true;
+    public bool CompactIslandUntilImminent { get; init; } = true;
     public bool ReminderEnabled { get; init; } = true;
 }
 

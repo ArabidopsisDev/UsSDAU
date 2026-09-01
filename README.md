@@ -41,10 +41,13 @@ UsSDAU 将个人课表、全校课表、成绩查询和桌面提醒集中到一�
 <img src="docs/images/daily-schedule.png" alt="每日课表" width="100%" />
 
 <p align="center">
-  <img src="docs/images/schedule-island.png" alt="顶部课表灵动岛" width="78%" />
+  <img src="docs/images/schedule-island.png" alt="完整顶部课表灵动岛" width="72%" />
+</p>
+<p align="center">
+  <img src="docs/images/schedule-island-compact.png" alt="紧凑顶部课表灵动岛" width="28%" />
 </p>
 
-灵动岛默认位于屏幕工作区顶端。状态保持不变一段时间后，窗口向上收起，只在顶部留下可悬停的底边；鼠标移入、课程状态变化、切换每日课表日期或触发课前提醒时自动展开。
+灵动岛默认位于屏幕工作区顶端。可选择“非临近课程时使用紧凑岛”：距离下一节课超过 30 分钟时只显示左侧当前课程摘要，进入课前 30 分钟后自动恢复完整课程条。状态保持不变一段时间后，窗口还会向上收起，只在顶部留下可悬停的底边；鼠标移入、课程状态变化、切换每日课表日期或触发课前提醒时滑下展开。
 
 ### 成绩、成绩单与离线校验
 
