@@ -1,0 +1,20 @@
+<Window x:Class="UsSDAU.Windows.ReminderWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Width="390" Height="146" WindowStyle="None" AllowsTransparency="True" Background="Transparent"
+        ShowInTaskbar="False" Topmost="True" ResizeMode="NoResize">
+    <Border CornerRadius="24" Background="#F7FFFFFF" BorderBrush="#251677FF" BorderThickness="1" Padding="22">
+        <Border.Effect><DropShadowEffect BlurRadius="28" ShadowDepth="8" Opacity="0.22"/></Border.Effect>
+        <Grid>
+            <Grid.ColumnDefinitions><ColumnDefinition Width="48"/><ColumnDefinition/></Grid.ColumnDefinitions>
+            <Border Width="42" Height="42" CornerRadius="14" Background="#1677FF" VerticalAlignment="Top">
+                <TextBlock Text="课" Foreground="White" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+            <StackPanel Grid.Column="1" Margin="14,0,0,0">
+                <TextBlock Text="下一节课将在 30 分钟内开始" Foreground="#59708F" FontSize="12"/>
+                <TextBlock x:Name="CourseText" FontSize="20" FontWeight="Bold" Margin="0,5,0,4"/>
+                <TextBlock x:Name="MetaText" Foreground="#52627A" FontSize="13"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>
