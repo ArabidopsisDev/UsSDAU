@@ -222,5 +222,6 @@ UsSDAU 目前是 Windows 桌面原型。教务系统页面或接口调整后，�
 
 ## 致谢
 
-干洗 [ClassIsland](https://github.com/ClassIsland/ClassIsland) 项目提供的灵动岛思路，这一设计方案极大的改善了课表的用户体验。
+感谢 [ClassIsland](https://github.com/ClassIsland/ClassIsland) 项目提供的灵动岛思路，这一设计方案极大的改善了课表的用户体验。
+
 感谢 [WeSDAU](https://github.com/Sleexycg/WeSDAU) 项目提供的教务系统解析思路，直接抄代码很爽。
