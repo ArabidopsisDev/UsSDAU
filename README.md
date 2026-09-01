@@ -61,7 +61,7 @@ UsSDAU 将个人课表、全校课表、成绩查询和桌面提醒集中到一�
   </tr>
 </table>
 
-正式成绩单不使用原生 `DataGrid`：中文正文采用宋体，表头采用黑体，英文与数字采用 Times New Roman；多页 PDF 重复页首与列标题，最后一页集中显示累计汇总、品牌水印、页码、签名指纹和离线二维码。
+正式成绩单不使用原生 `DataGrid`：中文正文采用宋体，表头采用黑体，英文与数字采用 Times New Roman。PDF 第 1 页是“山东农业大学学生成绩册”封面，包含身份、学业范围、累计汇总、签名指纹和离线二维码；正文每个新学期从新页开始，单页最多排 17 门课程并在学期末紧跟小计。
 
 ### 账号与运行设置
 
@@ -91,7 +91,7 @@ UsSDAU 将个人课表、全校课表、成绩查询和桌面提醒集中到一�
 - [x] 点击成绩查看平时/期末构成
 - [x] 遍历并汇总全部可用成绩学期
 - [x] 学期小计、总学分、平均分与累计绩点
-- [x] A4 PDF、多页页码与自有品牌水印
+- [x] A4 成绩册封面、按学期分页、正文页码与自有品牌水印
 - [x] 本机 ECDSA 签名与离线二维码完整性校验
 
 ### 桌面与提醒
@@ -214,12 +214,13 @@ UsSDAU/
 - `System.Formats.Cbor` — 确定性 CBOR 与 COSE 载荷
 - Windows Credential Manager / CNG / TPM
 
-## 设计说明
-
-UsSDAU 使用独立的品牌、WPF 架构、数据模型和实现代码。顶部常驻课程信息的产品方向参考了 [ClassIsland](https://github.com/ClassIsland/ClassIsland)；README 的“品牌 Banner + 真实截图 + 功能/技术分层”组织方式参考了 [Word2Sentence](https://github.com/ArabidopsisDev/Word2Sentence)。没有复制二者的代码、Logo、界面素材或受保护视觉资产。
-
 界面采用 Fluent 2 启发的字阶、间距、层级与语义色，并加载 .NET WPF 内置 Fluent Theme。宣传图背景由 OpenAI ImageGen 生成，软件窗口均来自 `USSDAU_DATA_DIR` 隔离演示环境的真实截图。
 
 ## 当前状态
 
 UsSDAU 目前是 Windows 桌面原型。教务系统页面或接口调整后，解析规则可能需要同步更新；请不要把本工具生成的成绩单当作学校正式材料提交。
+
+## 致谢
+
+干洗 [ClassIsland](https://github.com/ClassIsland/ClassIsland) 项目提供的灵动岛思路，这一设计方案极大的改善了课表的用户体验。
+感谢 [WeSDAU](https://github.com/Sleexycg/WeSDAU) 项目提供的教务系统解析思路，直接抄代码很爽。

@@ -8,6 +8,11 @@ using UsSDAU.Models;
 
 namespace UsSDAU.Services;
 
+public sealed record ScoreBatchQueryResult(
+    Dictionary<string, ScoreResult> Results,
+    IReadOnlyList<string> EmptyTerms,
+    IReadOnlyList<string> FailedTerms);
+
 public sealed partial class SdauAcademicService
 {
     private const string BaseUrl = "https://jw.sdau.edu.cn";
@@ -64,17 +69,16 @@ public sealed partial class SdauAcademicService
         return ScorePolicy.Recalculate(term, records);
     }
 
-    public async Task<Dictionary<string, ScoreResult>> QueryScoresAsync(
+    public async Task<ScoreBatchQueryResult> QueryScoresAsync(
         string account,
         string password,
         IReadOnlyList<string> terms,
         IProgress<(int Current, int Total, string Term)>? progress = null,
         CancellationToken ct = default)
     {
-        using var session = await LoginAsync(account, password, ct);
-        const string formPath = "/kscj/cjcx_frm";
-        await session.RequestAsync(formPath, HttpMethod.Get, ct: ct);
         var results = new Dictionary<string, ScoreResult>();
+        var emptyTerms = new List<string>();
+        var failedTerms = new List<string>();
         Exception? lastError = null;
         for (var index = 0; index < terms.Count; index++)
         {
@@ -82,17 +86,22 @@ public sealed partial class SdauAcademicService
             progress?.Report((index + 1, terms.Count, term));
             try
             {
-                var body = await session.RequestAsync(BuildScorePath(term), HttpMethod.Get, BaseUrl + formPath, ct: ct);
-                var records = ParseScoreRecords(body, term);
-                if (records.Count > 0) results[term] = ScorePolicy.Recalculate(term, records);
+                // The teaching system can invalidate or throttle a session after several
+                // consecutive score queries. Use a fresh authenticated session per term
+                // so older semesters are not silently lost from the cumulative transcript.
+                var result = await QueryScoresAsync(account, password, term, ct);
+                if (result.Records.Count > 0) results[term] = result;
+                else emptyTerms.Add(term);
             }
             catch (Exception error) when (!ct.IsCancellationRequested)
             {
                 lastError = error;
+                failedTerms.Add(term);
             }
+            if (index + 1 < terms.Count) await Task.Delay(180, ct);
         }
         if (results.Count == 0 && lastError is not null) throw new InvalidOperationException("所有学期成绩查询均失败。", lastError);
-        return results;
+        return new ScoreBatchQueryResult(results, emptyTerms, failedTerms);
     }
 
     public async Task<ScoreDetail> QueryScoreDetailAsync(string account, string password, ScoreRecord score, CancellationToken ct = default)

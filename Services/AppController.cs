@@ -100,12 +100,17 @@ public sealed class AppController(SettingsService settingsService, CacheService 
         await _networkGate.WaitAsync();
         try
         {
-            var results = await academic.QueryScoresAsync(account, password, terms, progress);
-            foreach (var item in results) await cache.SaveScoresAsync(account, item.Key, item.Value);
-            ScoreHistory = results;
-            Scores = results.GetValueOrDefault(Settings.ScoreTerm);
+            var batch = await academic.QueryScoresAsync(account, password, terms, progress);
+            foreach (var item in batch.Results) await cache.SaveScoresAsync(account, item.Key, item.Value);
+            var history = ScoreHistory.ToDictionary(x => x.Key, x => x.Value);
+            foreach (var item in batch.Results) history[item.Key] = item.Value;
+            ScoreHistory = history;
+            Scores = history.GetValueOrDefault(Settings.ScoreTerm);
             Profile ??= await TryLoadProfileAsync(password);
-            Status = $"已汇总 {results.Count} 个有成绩的学期";
+            var status = $"已汇总 {history.Count} 个有成绩的学期";
+            if (batch.EmptyTerms.Count > 0) status += $" · {batch.EmptyTerms.Count} 个暂无成绩";
+            if (batch.FailedTerms.Count > 0) status += $" · {batch.FailedTerms.Count} 个查询失败";
+            Status = status;
         }
         finally { _networkGate.Release(); }
         DataChanged?.Invoke(this, EventArgs.Empty);
