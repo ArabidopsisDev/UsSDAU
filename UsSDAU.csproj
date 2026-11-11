@@ -22,7 +22,7 @@
   <ItemGroup>
     <PackageReference Include="PDFsharp-GDI" Version="6.2.4" />
     <PackageReference Include="QRCoder" Version="1.8.0" />
-    <PackageReference Include="System.Formats.Cbor" Version="10.0.11" />
+    <PackageReference Include="System.Formats.Cbor" Version="10.0.15" />
   </ItemGroup>
 
 </Project>
